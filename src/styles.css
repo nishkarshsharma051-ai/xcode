@@ -249,20 +249,25 @@
     background-color: var(--surface);
     border: 2px dashed var(--border);
     border-radius: 0.85rem;
-    cursor: pointer;
     transition: border-color 0.15s ease, background-color 0.15s ease;
   }
 
-  .dropzone:hover,
   .dropzone[data-drag-active="true"] {
     border-color: var(--accent);
     background-color: var(--accent-tint);
   }
 
-  input[type="file"]:focus-visible + .dropzone {
+  .dropzone-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.65rem;
+    margin-block-start: 0.4rem;
+  }
+
+  input[type="file"]:focus-visible + .dropzone-cta {
     outline: 2px solid var(--accent);
     outline-offset: 2px;
-    border-color: var(--accent);
   }
 
   .dropzone-icon {
@@ -281,7 +286,6 @@
   }
 
   .dropzone-cta {
-    margin-block-start: 0.35rem;
     min-block-size: 44px;
     padding-inline: 1.1rem;
   }

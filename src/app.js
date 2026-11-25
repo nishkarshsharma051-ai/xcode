@@ -1,6 +1,7 @@
 import { upload } from './vendor/blob-client.js';
 
 const fileInput = document.getElementById('file-input');
+const folderInput = document.getElementById('folder-input');
 const dropzone = document.getElementById('dropzone');
 const dropzoneTitle = document.getElementById('dropzone-title');
 const uploadProgressWrap = document.getElementById('upload-progress-wrap');
@@ -15,8 +16,9 @@ const statSize = document.getElementById('stat-size');
 const statusBanner = document.getElementById('status-banner');
 const buildTimeEl = document.getElementById('build-time');
 
-const DEFAULT_DROPZONE_TITLE = 'Drag and drop files here, or click to browse';
+const DEFAULT_DROPZONE_TITLE = 'Drag and drop files or folders here';
 const MULTIPART_THRESHOLD_BYTES = 5 * 1024 * 1024;
+const IGNORED_SYSTEM_FILES = new Set(['.DS_Store', 'Thumbs.db', 'desktop.ini']);
 
 const numberFormatter = new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 });
 const dateFormatter = new Intl.DateTimeFormat(undefined, {
@@ -263,9 +265,52 @@ async function handleDelete(file, button) {
   }
 }
 
-async function uploadFiles(fileList) {
-  const files = [...fileList];
-  if (files.length === 0 || isUploading) return;
+function readDirectoryBatch(reader) {
+  return new Promise((resolve, reject) => {
+    reader.readEntries(resolve, reject);
+  });
+}
+
+function readEntryFile(entry) {
+  return new Promise((resolve, reject) => {
+    entry.file(resolve, reject);
+  });
+}
+
+async function collectEntryFiles(entry) {
+  if (entry.isFile) {
+    const file = await readEntryFile(entry);
+    const relativePath = entry.fullPath.replace(/^\/+/, '') || file.name;
+    return [{ file, path: relativePath }];
+  }
+
+  if (entry.isDirectory) {
+    const reader = entry.createReader();
+    const collected = [];
+    while (true) {
+      const batch = await readDirectoryBatch(reader);
+      if (batch.length === 0) break;
+      for (const child of batch) {
+        collected.push(...(await collectEntryFiles(child)));
+      }
+    }
+    return collected;
+  }
+
+  return [];
+}
+
+function toUploadQueue(items) {
+  return items.filter(({ file }) => !IGNORED_SYSTEM_FILES.has(file.name));
+}
+
+async function uploadFiles(rawItems) {
+  const queue = toUploadQueue(rawItems);
+  if (queue.length === 0) {
+    statusBanner.textContent = 'No uploadable files found in selection.';
+    return;
+  }
+  if (isUploading) return;
 
   isUploading = true;
   uploadProgressWrap.hidden = false;
@@ -273,13 +318,13 @@ async function uploadFiles(fileList) {
   let uploadedCount = 0;
 
   try {
-    for (let index = 0; index < files.length; index += 1) {
-      const file = files[index];
-      uploadProgressLabel.textContent = `Uploading (${index + 1}/${files.length}): ${file.name}`;
+    for (let index = 0; index < queue.length; index += 1) {
+      const { file, path } = queue[index];
+      uploadProgressLabel.textContent = `Uploading (${index + 1}/${queue.length}): ${path}`;
       uploadProgressBar.value = 0;
       uploadProgressPct.textContent = '0%';
 
-      await upload(file.name, file, {
+      await upload(path, file, {
         access: 'public',
         handleUploadUrl: '/api/upload',
         multipart: file.size > MULTIPART_THRESHOLD_BYTES,
@@ -296,7 +341,7 @@ async function uploadFiles(fileList) {
     await loadFiles(false);
     statusBanner.textContent =
       uploadedCount === 1
-        ? `Uploaded ${files[0].name}. Ready to download or copy link.`
+        ? `Uploaded ${queue[0].path}. Ready to download or copy link.`
         : `Uploaded ${uploadedCount} files. Ready to download or copy links.`;
   } catch (err) {
     statusBanner.textContent =
@@ -305,12 +350,13 @@ async function uploadFiles(fileList) {
     isUploading = false;
     uploadProgressWrap.hidden = true;
     fileInput.value = '';
+    folderInput.value = '';
   }
 }
 
 function setDragActive(active) {
   dropzone.dataset.dragActive = active ? 'true' : 'false';
-  dropzoneTitle.textContent = active ? 'Release to upload files' : DEFAULT_DROPZONE_TITLE;
+  dropzoneTitle.textContent = active ? 'Release to upload files or folders' : DEFAULT_DROPZONE_TITLE;
 }
 
 dropzone.addEventListener('dragenter', (event) => {
@@ -334,12 +380,34 @@ dropzone.addEventListener('dragleave', (event) => {
   }
 });
 
-dropzone.addEventListener('drop', (event) => {
+dropzone.addEventListener('drop', async (event) => {
   event.preventDefault();
   dragDepth = 0;
   setDragActive(false);
-  if (event.dataTransfer?.files?.length) {
-    uploadFiles(event.dataTransfer.files);
+
+  // Extract DataTransfer entries synchronously before any await clears DataTransfer
+  const entries = [...(event.dataTransfer?.items ?? [])]
+    .map((item) => item.webkitGetAsEntry?.())
+    .filter(Boolean);
+  const fallbackFiles = [...(event.dataTransfer?.files ?? [])];
+
+  if (entries.length > 0) {
+    statusBanner.textContent = 'Scanning dropped files and folders…';
+    try {
+      const nested = await Promise.all(entries.map(collectEntryFiles));
+      await uploadFiles(nested.flat());
+      return;
+    } catch (err) {
+      statusBanner.textContent =
+        err instanceof Error ? `Could not read folder: ${err.message}` : 'Could not read folder.';
+      return;
+    }
+  }
+
+  if (fallbackFiles.length > 0) {
+    await uploadFiles(
+      fallbackFiles.map((file) => ({ file, path: file.webkitRelativePath || file.name })),
+    );
   }
 });
 
@@ -349,7 +417,17 @@ window.addEventListener('drop', (event) => event.preventDefault());
 
 fileInput.addEventListener('change', () => {
   if (fileInput.files?.length) {
-    uploadFiles(fileInput.files);
+    uploadFiles(
+      [...fileInput.files].map((file) => ({ file, path: file.webkitRelativePath || file.name })),
+    );
+  }
+});
+
+folderInput.addEventListener('change', () => {
+  if (folderInput.files?.length) {
+    uploadFiles(
+      [...folderInput.files].map((file) => ({ file, path: file.webkitRelativePath || file.name })),
+    );
   }
 });
 
