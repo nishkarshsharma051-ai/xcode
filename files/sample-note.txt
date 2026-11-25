@@ -1,0 +1,8 @@
+Welcome to Aird File Drop!
+
+Replace or remove this sample file, drop your own files into the `files/` directory, and run:
+
+  vercel --prod
+
+to publish updated download links.
+

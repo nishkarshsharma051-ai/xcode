@@ -1,0 +1,13 @@
+{
+  "name": "aird-file-drop",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Simple static web file storage deployable to Vercel",
+  "scripts": {
+    "build": "node scripts/generate-manifest.mjs",
+    "dev": "node scripts/generate-manifest.mjs && node scripts/dev-server.mjs",
+    "deploy": "vercel --prod"
+  }
+}
+

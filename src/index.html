@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light dark">
+  <title>Aird — Quick File Storage</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <svg class="brand-icon" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <path d="M12 18v-6"/>
+          <path d="m9.5 15.5 2.5 2.5 2.5-2.5"/>
+        </svg>
+        <div>
+          <h1>Aird File Drop</h1>
+          <p class="subtitle">Simple static web storage for quick downloads</p>
+        </div>
+      </div>
+      <dl class="stats" aria-label="Storage summary">
+        <div class="stat-pill">
+          <dt>Files</dt>
+          <dd id="stat-count">—</dd>
+        </div>
+        <div class="stat-pill">
+          <dt>Total size</dt>
+          <dd id="stat-size">—</dd>
+        </div>
+      </dl>
+    </div>
+  </header>
+
+  <main class="container main-content">
+    <section class="toolbar" aria-label="Filter and sort files">
+      <search class="search-box">
+        <label for="search-input" class="visually-hidden">Filter files by name or path</label>
+        <input
+          id="search-input"
+          type="search"
+          placeholder="Filter files by name or extension…"
+          autocomplete="off"
+        >
+      </search>
+
+      <div class="sort-control">
+        <label for="sort-select">Sort by</label>
+        <select id="sort-select">
+          <option value="name-asc">Name (A–Z)</option>
+          <option value="name-desc">Name (Z–A)</option>
+          <option value="size-desc">Largest first</option>
+          <option value="size-asc">Smallest first</option>
+          <option value="date-desc">Newest first</option>
+        </select>
+      </div>
+    </section>
+
+    <p id="status-banner" class="status-banner" role="status" aria-live="polite"></p>
+
+    <div tabindex="0" role="region" aria-labelledby="files-caption" class="table-wrapper">
+      <table id="files-table">
+        <caption id="files-caption" class="visually-hidden">Available files for download</caption>
+        <thead>
+          <tr>
+            <th scope="col">File</th>
+            <th scope="col">Type</th>
+            <th scope="col">Size</th>
+            <th scope="col">Modified</th>
+            <th scope="col" class="col-actions">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="files-body">
+          <tr>
+            <td colspan="5" class="empty-cell">Loading files…</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>Drop files in <code>files/</code> and run <code>vercel --prod</code> to update.</p>
+      <p id="build-time" class="build-time"></p>
+    </div>
+  </footer>
+</body>
+</html>
+
