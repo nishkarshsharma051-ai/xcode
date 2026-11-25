@@ -1,17 +1,23 @@
-# Aird — Simple Static Web File Storage
+# Aird — Web File Storage
 
-A zero-dependency static file vault deployable to Vercel. Put any files you want to share inside `files/`, deploy, and download them from anywhere via direct links.
+A lightweight file drop & download site backed by **Vercel Blob** (plus optional static files in `files/`).
 
-## Usage
+## Features
+- **Drag & drop or browse** directly on the deployed site to upload files (up to 500 MB per file).
+- **Direct download links** and one-click **Copy link** for sharing.
+- **Delete** uploaded files directly from the UI.
+- **Static fallback**: any files placed inside `files/` are also packaged into `dist/files/` on build.
 
-1. Add or replace files inside `files/` (subfolders work too).
-2. Preview locally:
-   ```sh
-   npm run dev
-   ```
-3. Deploy to Vercel:
-   ```sh
-   vercel --prod
-   ```
-   Vercel automatically runs `npm run build` (`scripts/generate-manifest.mjs`) to package `dist/` and generate `dist/manifest.json` with every file's direct URL, size, and timestamp.
-
+## Local Development & Deployment
+- Build static assets & vendor bundle:
+  ```sh
+  npm run build
+  ```
+- Run with Vercel Functions + Blob locally:
+  ```sh
+  vercel dev
+  ```
+- Deploy to production:
+  ```sh
+  vercel --prod
+  ```

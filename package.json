@@ -8,6 +8,11 @@
     "build": "node scripts/generate-manifest.mjs",
     "dev": "node scripts/generate-manifest.mjs && node scripts/dev-server.mjs",
     "deploy": "vercel --prod"
+  },
+  "dependencies": {
+    "@vercel/blob": "^2.9.0"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2"
   }
 }
-

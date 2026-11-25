@@ -1,3 +1,12 @@
+import { upload } from './vendor/blob-client.js';
+
+const fileInput = document.getElementById('file-input');
+const dropzone = document.getElementById('dropzone');
+const dropzoneTitle = document.getElementById('dropzone-title');
+const uploadProgressWrap = document.getElementById('upload-progress-wrap');
+const uploadProgressLabel = document.getElementById('upload-progress-label');
+const uploadProgressPct = document.getElementById('upload-progress-pct');
+const uploadProgressBar = document.getElementById('upload-progress');
 const searchInput = document.getElementById('search-input');
 const sortSelect = document.getElementById('sort-select');
 const filesBody = document.getElementById('files-body');
@@ -6,6 +15,9 @@ const statSize = document.getElementById('stat-size');
 const statusBanner = document.getElementById('status-banner');
 const buildTimeEl = document.getElementById('build-time');
 
+const DEFAULT_DROPZONE_TITLE = 'Drag and drop files here, or click to browse';
+const MULTIPART_THRESHOLD_BYTES = 5 * 1024 * 1024;
+
 const numberFormatter = new Intl.NumberFormat(undefined, { maximumFractionDigits: 1 });
 const dateFormatter = new Intl.DateTimeFormat(undefined, {
   dateStyle: 'medium',
@@ -13,6 +25,8 @@ const dateFormatter = new Intl.DateTimeFormat(undefined, {
 });
 
 let allFiles = [];
+let isUploading = false;
+let dragDepth = 0;
 
 /**
  * Formats byte counts into human-readable units.
@@ -51,18 +65,27 @@ function sortFiles(files, sortKey) {
   }
 }
 
+function updateSummaryStats() {
+  const totalBytes = allFiles.reduce((sum, f) => sum + (f.size ?? 0), 0);
+  statCount.textContent = String(allFiles.length);
+  statSize.textContent = formatBytes(totalBytes);
+}
+
 /**
  * Builds a table row element for a single file entry without HTML string interpolation.
  * @param {object} file
  */
 function createFileRow(file) {
   const row = document.createElement('tr');
+  const downloadHref = file.downloadUrl ?? file.url;
 
   const nameCell = document.createElement('th');
   nameCell.scope = 'row';
 
   const openLink = document.createElement('a');
   openLink.href = file.url;
+  openLink.target = '_blank';
+  openLink.rel = 'noopener noreferrer';
   openLink.className = 'file-link';
   openLink.textContent = file.name;
   nameCell.append(openLink);
@@ -101,12 +124,12 @@ function createFileRow(file) {
   copyBtn.textContent = 'Copy link';
   copyBtn.setAttribute('aria-label', `Copy direct download link for ${file.name}`);
   copyBtn.addEventListener('click', async () => {
-    const absoluteUrl = new URL(file.url, window.location.href).href;
+    const absoluteUrl = new URL(downloadHref, window.location.href).href;
     try {
       await navigator.clipboard.writeText(absoluteUrl);
       copyBtn.textContent = 'Copied';
       copyBtn.classList.add('btn-copied');
-      statusBanner.textContent = `Copied link for ${file.name}.`;
+      statusBanner.textContent = `Copied download link for ${file.name}.`;
       setTimeout(() => {
         copyBtn.textContent = 'Copy link';
         copyBtn.classList.remove('btn-copied');
@@ -117,15 +140,25 @@ function createFileRow(file) {
   });
 
   const downloadLink = document.createElement('a');
-  downloadLink.href = file.url;
+  downloadLink.href = downloadHref;
   downloadLink.download = file.name;
   downloadLink.className = 'btn btn-primary';
   downloadLink.textContent = 'Download';
   downloadLink.setAttribute('aria-label', `Download ${file.name}`);
 
   actionGroup.append(copyBtn, downloadLink);
-  actionsCell.append(actionGroup);
 
+  if (file.source === 'blob') {
+    const deleteBtn = document.createElement('button');
+    deleteBtn.type = 'button';
+    deleteBtn.className = 'btn btn-danger';
+    deleteBtn.textContent = 'Delete';
+    deleteBtn.setAttribute('aria-label', `Delete ${file.name}`);
+    deleteBtn.addEventListener('click', () => handleDelete(file, deleteBtn));
+    actionGroup.append(deleteBtn);
+  }
+
+  actionsCell.append(actionGroup);
   row.append(nameCell, typeCell, sizeCell, dateCell, actionsCell);
   return row;
 }
@@ -140,7 +173,7 @@ function renderEmptyRow(message) {
   filesBody.replaceChildren(row);
 }
 
-function renderFiles() {
+function renderFiles(announce = true) {
   const query = searchInput.value.trim().toLowerCase();
   const filtered = query
     ? allFiles.filter(
@@ -152,54 +185,175 @@ function renderFiles() {
   const sorted = sortFiles(filtered, sortSelect.value);
 
   if (allFiles.length === 0) {
-    renderEmptyRow('No files uploaded yet. Add files to the files/ folder and redeploy.');
-    statusBanner.textContent = '';
+    renderEmptyRow('No files stored yet. Drag and drop a file above to upload it.');
+    if (announce) statusBanner.textContent = '';
     return;
   }
 
   if (sorted.length === 0) {
     renderEmptyRow(`No files match "${searchInput.value.trim()}".`);
-    statusBanner.textContent = `0 of ${allFiles.length} file(s) shown.`;
+    if (announce) statusBanner.textContent = `0 of ${allFiles.length} file(s) shown.`;
     return;
   }
 
   const rows = sorted.map(createFileRow);
   filesBody.replaceChildren(...rows);
-  statusBanner.textContent = query
-    ? `Showing ${sorted.length} of ${allFiles.length} file(s).`
-    : `${allFiles.length} file(s) ready to download.`;
-}
-
-async function init() {
-  try {
-    const response = await fetch('./manifest.json', {
-      signal: AbortSignal.timeout(8_000),
-      cache: 'no-store',
-    });
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status} while loading manifest.json`);
-    }
-
-    const manifest = await response.json();
-    allFiles = Array.isArray(manifest.files) ? manifest.files : [];
-
-    statCount.textContent = String(manifest.totalFiles ?? allFiles.length);
-    statSize.textContent = formatBytes(manifest.totalBytes ?? 0);
-
-    if (manifest.generatedAt) {
-      buildTimeEl.textContent = `Updated ${dateFormatter.format(new Date(manifest.generatedAt))}`;
-    }
-
-    renderFiles();
-  } catch (err) {
-    renderEmptyRow('Could not load the file list.');
-    statusBanner.textContent =
-      err instanceof Error ? `Error: ${err.message}` : 'Failed to load manifest.';
+  if (announce) {
+    statusBanner.textContent = query
+      ? `Showing ${sorted.length} of ${allFiles.length} file(s).`
+      : `${allFiles.length} file(s) ready to download.`;
   }
 }
 
-searchInput.addEventListener('input', renderFiles);
-sortSelect.addEventListener('change', renderFiles);
+async function fetchJsonOptional(url) {
+  try {
+    const response = await fetch(url, {
+      signal: AbortSignal.timeout(8_000),
+      cache: 'no-store',
+    });
+    if (!response.ok) return null;
+    return await response.json();
+  } catch {
+    return null;
+  }
+}
 
-init();
+async function loadFiles(announce = true) {
+  const [blobData, manifestData] = await Promise.all([
+    fetchJsonOptional('/api/files'),
+    fetchJsonOptional('./manifest.json'),
+  ]);
 
+  const blobFiles = Array.isArray(blobData?.blobs) ? blobData.blobs : [];
+  const staticFiles = Array.isArray(manifestData?.files) ? manifestData.files : [];
+
+  allFiles = [...blobFiles, ...staticFiles];
+  updateSummaryStats();
+
+  if (manifestData?.generatedAt) {
+    buildTimeEl.textContent = `Site updated ${dateFormatter.format(new Date(manifestData.generatedAt))}`;
+  }
+
+  renderFiles(announce);
+}
+
+async function handleDelete(file, button) {
+  button.disabled = true;
+  button.textContent = 'Deleting…';
+
+  try {
+    const deleteUrl = new URL('/api/files', window.location.origin);
+    deleteUrl.searchParams.set('url', file.url);
+    const response = await fetch(deleteUrl, {
+      method: 'DELETE',
+      signal: AbortSignal.timeout(10_000),
+    });
+    if (!response.ok) {
+      const payload = await response.json().catch(() => ({}));
+      throw new Error(payload.error ?? `HTTP ${response.status}`);
+    }
+
+    await loadFiles(false);
+    statusBanner.textContent = `Deleted ${file.name}.`;
+  } catch (err) {
+    button.disabled = false;
+    button.textContent = 'Delete';
+    statusBanner.textContent =
+      err instanceof Error ? `Delete failed: ${err.message}` : 'Failed to delete file.';
+  }
+}
+
+async function uploadFiles(fileList) {
+  const files = [...fileList];
+  if (files.length === 0 || isUploading) return;
+
+  isUploading = true;
+  uploadProgressWrap.hidden = false;
+
+  let uploadedCount = 0;
+
+  try {
+    for (let index = 0; index < files.length; index += 1) {
+      const file = files[index];
+      uploadProgressLabel.textContent = `Uploading (${index + 1}/${files.length}): ${file.name}`;
+      uploadProgressBar.value = 0;
+      uploadProgressPct.textContent = '0%';
+
+      await upload(file.name, file, {
+        access: 'public',
+        handleUploadUrl: '/api/upload',
+        multipart: file.size > MULTIPART_THRESHOLD_BYTES,
+        onUploadProgress: ({ percentage }) => {
+          const rounded = Math.round(percentage);
+          uploadProgressBar.value = rounded;
+          uploadProgressPct.textContent = `${rounded}%`;
+        },
+      });
+
+      uploadedCount += 1;
+    }
+
+    await loadFiles(false);
+    statusBanner.textContent =
+      uploadedCount === 1
+        ? `Uploaded ${files[0].name}. Ready to download or copy link.`
+        : `Uploaded ${uploadedCount} files. Ready to download or copy links.`;
+  } catch (err) {
+    statusBanner.textContent =
+      err instanceof Error ? `Upload failed: ${err.message}` : 'Upload failed.';
+  } finally {
+    isUploading = false;
+    uploadProgressWrap.hidden = true;
+    fileInput.value = '';
+  }
+}
+
+function setDragActive(active) {
+  dropzone.dataset.dragActive = active ? 'true' : 'false';
+  dropzoneTitle.textContent = active ? 'Release to upload files' : DEFAULT_DROPZONE_TITLE;
+}
+
+dropzone.addEventListener('dragenter', (event) => {
+  event.preventDefault();
+  dragDepth += 1;
+  setDragActive(true);
+});
+
+dropzone.addEventListener('dragover', (event) => {
+  event.preventDefault();
+  if (event.dataTransfer) {
+    event.dataTransfer.dropEffect = 'copy';
+  }
+});
+
+dropzone.addEventListener('dragleave', (event) => {
+  event.preventDefault();
+  dragDepth = Math.max(0, dragDepth - 1);
+  if (dragDepth === 0) {
+    setDragActive(false);
+  }
+});
+
+dropzone.addEventListener('drop', (event) => {
+  event.preventDefault();
+  dragDepth = 0;
+  setDragActive(false);
+  if (event.dataTransfer?.files?.length) {
+    uploadFiles(event.dataTransfer.files);
+  }
+});
+
+// Prevent browser from navigating away if a file is dropped slightly outside the dropzone
+window.addEventListener('dragover', (event) => event.preventDefault());
+window.addEventListener('drop', (event) => event.preventDefault());
+
+fileInput.addEventListener('change', () => {
+  if (fileInput.files?.length) {
+    uploadFiles(fileInput.files);
+  }
+});
+
+searchInput.addEventListener('input', () => renderFiles(true));
+sortSelect.addEventListener('change', () => renderFiles(true));
+
+loadFiles(true);
