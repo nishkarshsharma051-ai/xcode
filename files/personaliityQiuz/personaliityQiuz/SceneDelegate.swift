@@ -1,8 +1,8 @@
 //
 //  SceneDelegate.swift
-//  demo
+//  personaliityQiuz
 //
-//  Created by Nishkarsh on 21/10/26.
+//  Created by Puneet Kumar on 28/10/26.
 //
 
 import UIKit

@@ -3,55 +3,57 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 110;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXFileReference section */
-		B4AE22E13088B0ED009206D0 /* demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = demo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B73D923C3091CD24005466A6 /* personaliityQiuz.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = personaliityQiuz.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		B4AE22F33088B0EF009206D0 /* Exceptions for "demo" folder in "demo" target */ = {
+		B73D924E3091CD24005466A6 /* Exceptions for "personaliityQiuz" folder in "personaliityQiuz" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = B4AE22E03088B0ED009206D0 /* demo */;
+			target = B73D923B3091CD24005466A6 /* personaliityQiuz */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		B4AE22E33088B0ED009206D0 /* demo */ = {
+		B73D923E3091CD24005466A6 /* personaliityQiuz */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				B4AE22F33088B0EF009206D0 /* Exceptions for "demo" folder in "demo" target */,
+				B73D924E3091CD24005466A6 /* Exceptions for "personaliityQiuz" folder in "personaliityQiuz" target */,
 			);
-			path = demo;
+			path = personaliityQiuz;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		B4AE22DE3088B0ED009206D0 /* Frameworks */ = {
+		B73D92393091CD24005466A6 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		B4AE22D83088B0ED009206D0 = {
+		B73D92333091CD24005466A6 = {
 			isa = PBXGroup;
 			children = (
-				B4AE22E33088B0ED009206D0 /* demo */,
-				B4AE22E23088B0ED009206D0 /* Products */,
+				B73D923E3091CD24005466A6 /* personaliityQiuz */,
+				B73D923D3091CD24005466A6 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		B4AE22E23088B0ED009206D0 /* Products */ = {
+		B73D923D3091CD24005466A6 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				B4AE22E13088B0ED009206D0 /* demo.app */,
+				B73D923C3091CD24005466A6 /* personaliityQiuz.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -59,76 +61,84 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		B4AE22E03088B0ED009206D0 /* demo */ = {
+		B73D923B3091CD24005466A6 /* personaliityQiuz */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B4AE22F43088B0EF009206D0 /* Build configuration list for PBXNativeTarget "demo" */;
+			buildConfigurationList = B73D924F3091CD24005466A6 /* Build configuration list for PBXNativeTarget "personaliityQiuz" */;
 			buildPhases = (
-				B4AE22DD3088B0ED009206D0 /* Sources */,
-				B4AE22DE3088B0ED009206D0 /* Frameworks */,
-				B4AE22DF3088B0ED009206D0 /* Resources */,
+				B73D92383091CD24005466A6 /* Sources */,
+				B73D92393091CD24005466A6 /* Frameworks */,
+				B73D923A3091CD24005466A6 /* Resources */,
 			);
 			buildRules = (
 			);
-			fileSystemSynchronizedGroups = (
-				B4AE22E33088B0ED009206D0 /* demo */,
+			dependencies = (
 			);
-			name = demo;
-			productName = demo;
-			productReference = B4AE22E13088B0ED009206D0 /* demo.app */;
+			fileSystemSynchronizedGroups = (
+				B73D923E3091CD24005466A6 /* personaliityQiuz */,
+			);
+			name = personaliityQiuz;
+			packageProductDependencies = (
+			);
+			productName = personaliityQiuz;
+			productReference = B73D923C3091CD24005466A6 /* personaliityQiuz.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		B4AE22D93088B0ED009206D0 /* Project object */ = {
+		B73D92343091CD24005466A6 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2710;
-				LastUpgradeCheck = 2710;
+				LastSwiftUpdateCheck = 2660;
+				LastUpgradeCheck = 2660;
 				TargetAttributes = {
-					B4AE22E03088B0ED009206D0 = {
-						CreatedOnToolsVersion = 27.1;
+					B73D923B3091CD24005466A6 = {
+						CreatedOnToolsVersion = 26.6;
 					};
 				};
 			};
-			buildConfigurationList = B4AE22DC3088B0ED009206D0 /* Build configuration list for PBXProject "demo" */;
+			buildConfigurationList = B73D92373091CD24005466A6 /* Build configuration list for PBXProject "personaliityQiuz" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
 			);
-			mainGroup = B4AE22D83088B0ED009206D0;
+			mainGroup = B73D92333091CD24005466A6;
 			minimizedProjectReferenceProxies = 1;
 			preferredProjectObjectVersion = 77;
-			productRefGroup = B4AE22E23088B0ED009206D0 /* Products */;
+			productRefGroup = B73D923D3091CD24005466A6 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				B4AE22E03088B0ED009206D0 /* demo */,
+				B73D923B3091CD24005466A6 /* personaliityQiuz */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		B4AE22DF3088B0ED009206D0 /* Resources */ = {
+		B73D923A3091CD24005466A6 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		B4AE22DD3088B0ED009206D0 /* Sources */ = {
+		B73D92383091CD24005466A6 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		B4AE22F53088B0EF009206D0 /* Debug configuration for PBXNativeTarget "demo" */ = {
+		B73D92503091CD24005466A6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -136,7 +146,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = demo/Info.plist;
+				INFOPLIST_FILE = personaliityQiuz/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -147,7 +157,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.nishkarsh.demo;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.puneet.personaliityQiuz";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -159,7 +169,7 @@
 			};
 			name = Debug;
 		};
-		B4AE22F63088B0EF009206D0 /* Release configuration for PBXNativeTarget "demo" */ = {
+		B73D92513091CD24005466A6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -167,7 +177,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = demo/Info.plist;
+				INFOPLIST_FILE = personaliityQiuz/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -178,7 +188,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.nishkarsh.demo;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.puneet.personaliityQiuz";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -190,7 +200,7 @@
 			};
 			name = Release;
 		};
-		B4AE22F73088B0EF009206D0 /* Debug configuration for PBXProject "demo" */ = {
+		B73D92523091CD24005466A6 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -242,7 +252,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -253,7 +263,7 @@
 			};
 			name = Debug;
 		};
-		B4AE22F83088B0EF009206D0 /* Release configuration for PBXProject "demo" */ = {
+		B73D92533091CD24005466A6 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -299,7 +309,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.5;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -312,24 +322,25 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		B4AE22DC3088B0ED009206D0 /* Build configuration list for PBXProject "demo" */ = {
+		B73D92373091CD24005466A6 /* Build configuration list for PBXProject "personaliityQiuz" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				B4AE22F73088B0EF009206D0 /* Debug configuration for PBXProject "demo" */,
-				B4AE22F83088B0EF009206D0 /* Release configuration for PBXProject "demo" */,
+				B73D92523091CD24005466A6 /* Debug */,
+				B73D92533091CD24005466A6 /* Release */,
 			);
+			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		B4AE22F43088B0EF009206D0 /* Build configuration list for PBXNativeTarget "demo" */ = {
+		B73D924F3091CD24005466A6 /* Build configuration list for PBXNativeTarget "personaliityQiuz" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				B4AE22F53088B0EF009206D0 /* Debug configuration for PBXNativeTarget "demo" */,
-				B4AE22F63088B0EF009206D0 /* Release configuration for PBXNativeTarget "demo" */,
+				B73D92503091CD24005466A6 /* Debug */,
+				B73D92513091CD24005466A6 /* Release */,
 			);
+			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = B4AE22D93088B0ED009206D0 /* Project object */;
-	validationLevel = 1;
+	rootObject = B73D92343091CD24005466A6 /* Project object */;
 }
